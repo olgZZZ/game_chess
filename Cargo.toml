@@ -11,10 +11,13 @@ members = [
   "module/*",
   "sample/simple_grpc/client",
   "sample/simple_grpc/server",
+  "sample/simple_multiplayer/checkers_client",
+  "sample/simple_multiplayer/checkers_server",
   "sample/*",
 ]
 exclude = [
   "sample/simple_grpc",
+  "sample/simple_multiplayer",
 ]
 # default-members = [ "module/game" ]
 
