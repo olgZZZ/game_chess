@@ -25,7 +25,14 @@ impl ChessRpcServer
 #[tonic::async_trait]
 impl Chess for ChessRpcServer
 {
-  async fn push_game_create(&self, request : Request<CreateGame>) -> Result<Response<GameId>, Status> { todo!() }
+  async fn push_game_create(&self, request : Request<CreateGame>) -> Result<Response<GameId>, Status>
+  {
+    // todo!();
+    println!("create game");
+    Result::Ok(Response::new(GameId {
+      game_id : "874d60be-64f3-4583-8fcd-81d9ca2b4616".into(),
+    }))
+  }
 
   async fn push_game_accept(&self, request : Request<AcceptGame>) -> Result<Response<GameId>, Status> { todo!() }
 
