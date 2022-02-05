@@ -54,7 +54,7 @@ message Board
 
 message Games
 {
-  // ?
+  repeated string game_ids = 1;
 }
 
 message GameMove

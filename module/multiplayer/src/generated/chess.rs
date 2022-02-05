@@ -42,9 +42,12 @@ pub struct Board
   #[prost(message, optional, tag = "2")]
   pub board_state : ::core::option::Option<Blank>,
 }
-/// ?
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct Games {}
+pub struct Games
+{
+  #[prost(string, repeated, tag = "1")]
+  pub game_ids : ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GameMove
 {

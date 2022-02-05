@@ -10,6 +10,7 @@ use multiplayer::generated::chess::chess_server::Chess;
 use crate::store::GameStore;
 use multiplayer::generated::chess::{Board, GameState, Games, CreateGame, GameId, AcceptGame, GameMove, GamePlayer, Msg, Msgs};
 use crate::store::memory::MemoryStore;
+use multiplayer::MultiplayerGame;
 
 ///
 /// Shared sever.
@@ -40,7 +41,13 @@ impl Chess for ChessRpcServer
   ///
   /// Apply request to create new game.
   ///
-  async fn push_game_create(&self, _request : Request<CreateGame>) -> Result<Response<GameId>, Status> { todo!() }
+  async fn push_game_create(&self, request : Request<CreateGame>) -> Result<Response<GameId>, Status>
+  {
+    let game_id = uuid::Uuid::new_v4().to_string();
+    let new_game = MultiplayerGame::new(&game_id, request.get_ref().player.as_ref().unwrap().into());
+    self.store.lock().unwrap().add_game(new_game);
+    Ok(Response::new(GameId { game_id }))
+  }
 
   ///
   /// Accept request to join game.
@@ -65,7 +72,11 @@ impl Chess for ChessRpcServer
   ///
   /// Get list of games.
   ///
-  async fn pull_games_list(&self, _request : Request<()>) -> Result<Response<Games>, Status> { todo!() }
+  async fn pull_games_list(&self, _request : Request<()>) -> Result<Response<Games>, Status>
+  {
+    let ids = self.store.lock().unwrap().get_games().iter().map(|g| g.id().into()).collect();
+    Ok(Response::new(Games { game_ids : ids }))
+  }
 
   ///
   /// Send request to forfeit.
