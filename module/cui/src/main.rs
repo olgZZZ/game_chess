@@ -75,12 +75,15 @@ Commands minimal
 */
 
 use game_chess_core::*;
+use multiplayer::generated::chess::{CreateGame, Player};
+use multiplayer::generated::chess::chess_client::ChessClient;
+use tonic::Request;
 
 ///
 /// Main. CLI game itself.
 ///
-
-pub fn main()
+#[tokio::main]
+pub async fn main()
 {
   let mut game : Option<Game> = None;
   let mut choice;
@@ -101,9 +104,28 @@ pub fn main()
       ".status" | ".s" => command_status(&game),
       ".quit" => command_exit(&game),
       ".help" => command_help(),
+      ".online.game.new" => command_online_game_new(&mut game).await,
+      ".online.game.list" => command_online_game_list().await,
       command => println!("Unknown command : {}\n", command),
     }
   }
+}
+
+pub async fn command_online_game_list() {
+  let mut chess_client = ChessClient::connect("http://127.0.0.1:1313").await.unwrap();
+  let res = chess_client.pull_games_list(Request::new(())).await.unwrap();
+  println!("games on the server: {:?}", res.get_ref().game_ids);
+}
+
+pub async fn command_online_game_new(game: &mut Option<Game>) {
+  let mut chess_client = ChessClient::connect("http://127.0.0.1:1313").await.unwrap();
+  let res = chess_client.push_game_create(Request::new(CreateGame {
+    player: Some(Player {
+      player_id: "1".into(),
+      player_name: "pasha".into(),
+    })
+  })).await.unwrap();
+  println!("created game id: {}", res.get_ref().game_id);
 }
 
 ///
@@ -119,6 +141,9 @@ pub fn command_help()
   println!("");
 
   println!(".game.new  => Create game with default board");
+  println!(".game.save => Save game to file");
+  println!(".online.game.new => Create new multiplayer game");
+  println!(".online.game.list => List all active multiplayer games");
   println!(".game.save => Save game to file");
   println!(".move      => Make a move by providing move in UCI format: \"a2a4\" ");
   println!(".status    => Print board, current turn, last move");

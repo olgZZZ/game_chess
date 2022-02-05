@@ -31,4 +31,7 @@ path = "./src/main.rs"
 
 [dependencies]
 game_chess_core = { version = "~0.0", path = "../core" }
+tokio = { version = "1.15.0", features = ["full"] }
+multiplayer = { path = "../multiplayer" }
+tonic = "~0.6"
 wca = "0.1.0"
